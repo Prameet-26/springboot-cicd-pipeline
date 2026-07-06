@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "springboot-cicd"
         DOCKERHUB_USER = "prameet26"
+        IMAGE_NAME = "springboot-cicd"
     }
 
     stages {
@@ -16,47 +16,84 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh './mvnw clean package'
+                sh '''
+                    chmod +x mvnw
+                    ./mvnw clean package
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh './mvnw test'
+                sh '''
+                    chmod +x mvnw
+                    ./mvnw test
+                '''
+            }
+        }
+
+        stage('Docker Info') {
+            steps {
+                sh '''
+                    echo "Current User:"
+                    whoami
+
+                    echo "Current Directory:"
+                    pwd
+
+                    echo "PATH:"
+                    echo $PATH
+
+                    echo "Docker Version:"
+                    /usr/bin/docker --version
+                '''
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $DOCKERHUB_USER/$IMAGE_NAME:latest .'
+                sh '''
+                    /usr/bin/docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
+                '''
             }
         }
 
         stage('Docker Login') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-cred',
-                    usernameVariable: 'USER',
-                    passwordVariable: 'PASS'
-                )]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-cred',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | /usr/bin/docker login -u "$DOCKER_USER" --password-stdin
+                    '''
                 }
             }
         }
 
         stage('Docker Push') {
             steps {
-                sh 'docker push $DOCKERHUB_USER/$IMAGE_NAME:latest'
+                sh '''
+                    /usr/bin/docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+                '''
             }
         }
     }
 
     post {
         success {
-            echo '🚀 CI/CD Pipeline SUCCESS'
+            echo '🎉 Pipeline completed successfully!'
         }
+
         failure {
-            echo '❌ CI/CD Pipeline FAILED'
+            echo '❌ Pipeline failed!'
+        }
+
+        always {
+            cleanWs()
         }
     }
 }
