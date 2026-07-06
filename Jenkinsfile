@@ -26,7 +26,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                    chmod +x mvnw
                     ./mvnw test
                 '''
             }
@@ -38,14 +37,13 @@ pipeline {
                     echo "Current User:"
                     whoami
 
-                    echo "Current Directory:"
-                    pwd
-
-                    echo "PATH:"
-                    echo $PATH
+                    echo "Docker Location:"
+                    which docker
 
                     echo "Docker Version:"
-                    /usr/bin/docker --version
+                    docker --version
+
+                    docker info
                 '''
             }
         }
@@ -53,7 +51,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                    /usr/bin/docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
+                    docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
                 '''
             }
         }
@@ -68,7 +66,7 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        echo "$DOCKER_PASS" | /usr/bin/docker login -u "$DOCKER_USER" --password-stdin
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     '''
                 }
             }
@@ -77,7 +75,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 sh '''
-                    /usr/bin/docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+                    docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
                 '''
             }
         }
