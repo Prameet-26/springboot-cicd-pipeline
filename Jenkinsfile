@@ -1,14 +1,9 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven3'
-    }
-
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
-        IMAGE_NAME = "prameet26/springboot-cicd"
-        IMAGE_TAG = "latest"
+        IMAGE_NAME = "springboot-cicd"
+        DOCKERHUB_USER = "prameet26"
     }
 
     stages {
@@ -19,69 +14,49 @@ pipeline {
             }
         }
 
-        stage('Compile') {
+        stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh './mvnw clean package'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh './mvnw test'
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Docker Build') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh """
-                    ${SCANNER_HOME}/bin/sonar-scanner \
-                    -Dsonar.projectKey=springboot-cicd \
-                    -Dsonar.projectName=springboot-cicd \
-                    -Dsonar.sources=src \
-                    -Dsonar.java.binaries=target/classes
-                    """
-                }
+                sh 'docker build -t $DOCKERHUB_USER/$IMAGE_NAME:latest .'
             }
         }
 
-        stage('Package') {
-            steps {
-                sh 'mvn package -DskipTests'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
-            }
-        }
-
-        stage('Push Docker Image') {
+        stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
+                    credentialsId: 'dockerhub-cred',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
                 )]) {
-
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    docker logout
-                    '''
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh 'docker push $DOCKERHUB_USER/$IMAGE_NAME:latest'
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo '🚀 CI/CD Pipeline SUCCESS'
         }
-
         failure {
-            echo 'Pipeline failed.'
+            echo '❌ CI/CD Pipeline FAILED'
         }
     }
 }
