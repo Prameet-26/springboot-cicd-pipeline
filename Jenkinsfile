@@ -29,21 +29,23 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh '/usr/bin/docker build -t $DOCKERHUB_USER/$IMAGE_NAME:latest .'
+                sh '''
+docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
+'''
             }
         }
 
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh 'echo $PASS | /usr/bin/docker login -u $USER --password-stdin'
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
             }
         }
 
         stage('Docker Push') {
             steps {
-                sh '/usr/bin/docker push $DOCKERHUB_USER/$IMAGE_NAME:latest'
+                sh 'docker push $DOCKERHUB_USER/$IMAGE_NAME:latest'
             }
         }
     }
