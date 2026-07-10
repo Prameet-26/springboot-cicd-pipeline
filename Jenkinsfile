@@ -32,6 +32,27 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                        chmod +x mvnw
+                        ./mvnw sonar:sonar \
+                          -Dsonar.projectKey=springboot-cicd \
+                          -Dsonar.projectName=springboot-cicd
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Docker Info') {
             steps {
                 sh '''
@@ -81,15 +102,32 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    /usr/bin/docker stop springboot-cicd || true
+                    /usr/bin/docker rm springboot-cicd || true
+
+                    /usr/bin/docker pull ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+
+                    /usr/bin/docker run -d \
+                        --name springboot-cicd \
+                        -p 8081:8080 \
+                        ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+                '''
+            }
+        }
     }
 
     post {
+
         success {
-            echo '🎉 Pipeline completed successfully!'
+            echo '🎉 CI/CD Pipeline SUCCESS'
         }
 
         failure {
-            echo '❌ Pipeline failed!'
+            echo '❌ CI/CD Pipeline FAILED'
         }
 
         always {
