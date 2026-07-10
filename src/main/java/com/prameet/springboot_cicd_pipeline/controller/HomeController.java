@@ -11,6 +11,11 @@ public class HomeController {
         return "Welcome to Spring Boot CI/CD Pipeline!";
     }
 
+    @GetMapping("/hello")
+    public String hello() {
+        return "CI/CD Pipeline is Working 🚀";
+    }
+
     @GetMapping("/health")
     public String health() {
         return "Application is running successfully!";
