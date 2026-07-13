@@ -1,252 +1,449 @@
-# Spring Boot CI/CD Pipeline
+<div align="center">
 
-# 🚀 Spring Boot CI/CD Pipeline with Jenkins, Docker, SonarQube, Prometheus & Grafana
+# 🚀 Spring Boot CI/CD Pipeline with Monitoring
 
-## 📌 Project Overview
+### End-to-End DevOps Project using Spring Boot, Jenkins, SonarQube, Docker, Prometheus, Grafana & Alertmanager
 
-This project demonstrates a complete DevOps CI/CD pipeline for deploying and monitoring a Spring Boot application on AWS EC2.
+![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/SpringBoot-3.x-green?style=for-the-badge&logo=springboot)
+![Jenkins](https://img.shields.io/badge/Jenkins-CI-red?style=for-the-badge&logo=jenkins)
+![Docker](https://img.shields.io/badge/Docker-Container-blue?style=for-the-badge&logo=docker)
+![SonarQube](https://img.shields.io/badge/SonarQube-Code%20Quality-4E9BCD?style=for-the-badge&logo=sonarqube)
+![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-orange?style=for-the-badge&logo=prometheus)
+![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?style=for-the-badge&logo=grafana)
+![Alertmanager](https://img.shields.io/badge/Alertmanager-Email%20Alerts-yellow?style=for-the-badge)
 
-The pipeline automates code checkout, application build, testing, code quality analysis, Docker image creation, image publishing, and application deployment. It also includes a complete monitoring and alerting stack using Prometheus, Grafana, Alertmanager, Micrometer, and Node Exporter.
+**A complete CI/CD pipeline with automated build, testing, code quality analysis, Docker image creation, Docker Hub publishing, application monitoring, dashboard visualization and email alerting.**
+
+
 
 ---
 
-# 🏗️ Architecture
+# 📚 Table of Contents
 
-```
-                    GitHub Repository
-                           │
-                           ▼
-                     Jenkins Pipeline
-                           │
-          ┌────────────────┼────────────────┐
-          ▼                ▼                ▼
-     Build (Maven)     Unit Tests      SonarQube Scan
-                           │
-                           ▼
-                    Docker Image Build
-                           │
-                           ▼
-                     Push to DockerHub
-                           │
-                           ▼
-                 AWS EC2 Docker Host
-                           │
-                  Spring Boot Container
-                           │
-          ┌────────────────┴────────────────┐
-          ▼                                 ▼
-    Micrometer Metrics               Node Exporter
-          │                                 │
-          └──────────────┬──────────────────┘
-                         ▼
-                    Prometheus
+- Project Overview
+- Architecture
+- Technology Stack
+- Project Structure
+- CI/CD Workflow
+- Jenkins Pipeline
+- Docker
+- SonarQube
+- Monitoring Stack
+- Docker Hub
+- Running the Project
+- Screenshots
+- Challenges Faced
+- Learning Outcomes
+- Future Improvements
+- Author
+
+---
+
+# 📌 Project Overview
+
+This project demonstrates a production-style DevOps workflow for a Spring Boot application.
+
+Whenever a developer pushes code to GitHub, Jenkins automatically performs the following tasks:
+
+- Checkout Source Code
+- Build Application
+- Execute Unit Tests
+- Static Code Analysis using SonarQube
+- Build Docker Image
+- Push Docker Image to Docker Hub
+
+After deployment, the application is continuously monitored using:
+
+- Spring Boot Actuator
+- Micrometer
+- Prometheus
+- Grafana
+- Alertmanager
+
+This project simulates a real DevOps workflow commonly used in enterprise environments.
+
+---
+
+# 🏗 Architecture
+
+```text
+                     Developer
                          │
-            ┌────────────┴────────────┐
-            ▼                         ▼
-      Alertmanager               Grafana
-            │                         │
-            ▼                         ▼
-       Email Alerts           Live Dashboards
+                         ▼
+                  GitHub Repository
+                         │
+                         ▼
+                  Jenkins Pipeline
+                         │
+      ┌──────────────────┼─────────────────┐
+      │                  │                 │
+      ▼                  ▼                 ▼
+ Checkout           Build/Test      SonarQube Scan
+      │                  │                 │
+      └──────────────────┼─────────────────┘
+                         ▼
+                Docker Image Build
+                         │
+                         ▼
+                 Docker Hub Registry
+                         │
+                         ▼
+              Spring Boot Container
+                         │
+               /actuator/prometheus
+                         │
+                         ▼
+                  Prometheus Server
+                         │
+                         ▼
+                  Grafana Dashboard
+                         │
+                         ▼
+                   Alertmanager
+                         │
+                         ▼
+                Email Notifications
 ```
 
 ---
 
-# ✨ Features
+# 🛠 Technology Stack
 
-* Automated CI/CD pipeline using Jenkins
-* Source code management with GitHub
-* Maven build automation
-* Unit testing during pipeline execution
-* SonarQube code quality analysis
-* Docker image creation
-* DockerHub integration
-* Deployment on AWS EC2
-* Spring Boot Actuator metrics
-* Micrometer integration
-* Prometheus monitoring
-* Grafana dashboards
-* Node Exporter for Linux server monitoring
-* Alertmanager email notifications
-* Container monitoring with cAdvisor integration
-
----
-
-# 🛠️ Technology Stack
-
-| Category             | Technologies  |
-| -------------------- | ------------- |
-| Language             | Java 21       |
-| Framework            | Spring Boot   |
-| Build Tool           | Maven         |
-| Version Control      | Git, GitHub   |
-| CI/CD                | Jenkins       |
-| Code Quality         | SonarQube     |
-| Containerization     | Docker        |
-| Container Registry   | DockerHub     |
-| Cloud Platform       | AWS EC2       |
-| Monitoring           | Prometheus    |
-| Visualization        | Grafana       |
-| Metrics              | Micrometer    |
-| Server Monitoring    | Node Exporter |
-| Alerting             | Alertmanager  |
-| Container Monitoring | cAdvisor      |
+| Category | Technology |
+|-----------|------------|
+| Language | Java 21 |
+| Framework | Spring Boot |
+| Build Tool | Maven |
+| Version Control | Git |
+| Repository | GitHub |
+| CI/CD | Jenkins |
+| Code Analysis | SonarQube |
+| Containerization | Docker |
+| Registry | Docker Hub |
+| Monitoring | Prometheus |
+| Visualization | Grafana |
+| Alerting | Alertmanager |
+| OS | Ubuntu |
 
 ---
 
-# 🔄 CI/CD Pipeline Workflow
+# 📂 Project Structure
 
-1. Developer pushes code to GitHub.
-2. Jenkins detects the latest changes.
-3. Source code is checked out.
-4. Maven compiles the application.
-5. Unit tests are executed.
-6. SonarQube performs static code analysis.
-7. Docker image is built.
-8. Docker image is pushed to DockerHub.
-9. Docker container is deployed on AWS EC2.
-10. Spring Boot exposes metrics through Micrometer.
-11. Prometheus scrapes application and infrastructure metrics.
-12. Grafana visualizes metrics.
-13. Alertmanager sends email alerts when predefined conditions are met.
-
----
-
-# 📊 Monitoring Stack
-
-### Application Monitoring
-
-* Spring Boot Actuator
-* Micrometer
-* JVM Metrics
-* HTTP Metrics
-* Application Health
-
-### Infrastructure Monitoring
-
-* CPU Usage
-* Memory Usage
-* Disk Usage
-* Filesystem
-* Network Usage
-* System Load
-
-### Container Monitoring
-
-* Docker Container Metrics
-* CPU Usage
-* Memory Usage
-* Network Traffic
-* Filesystem Metrics
-
----
-
-# 📧 Alerting
-
-Alertmanager is configured to send email notifications whenever:
-
-* Spring Boot application becomes unavailable
-* Prometheus alert rules are triggered
-
-Example alert:
-
-```
-[FIRING:1] SpringBootAppDown
-```
-
----
-
-# 📁 Project Structure
-
-```
+```text
 springboot-cicd-pipeline
 │
-├── src/
-├── pom.xml
+├── src
+│
 ├── Dockerfile
+├── Dockerfile.jenkins
 ├── Jenkinsfile
+├── pom.xml
+├── mvnw
 ├── README.md
-│
-├── monitoring/
-│   ├── prometheus.yml
-│   ├── alert.rules.yml
-│   └── alertmanager.yml
-│
-├── screenshots/
-│   ├── jenkins-success.png
-│   ├── sonarqube-dashboard.png
-│   ├── prometheus-targets.png
-│   ├── grafana-dashboard.png
-│   └── alert-email.png
-│
-└── docs/
+└── HELP.md
 ```
 
 ---
 
-# 🚀 Running the Project
+# ⚙ CI/CD Workflow
 
-## Clone Repository
+## Stage 1 — Checkout
+
+Jenkins clones the latest code from the **dev** branch.
+
+---
+
+## Stage 2 — Build
 
 ```bash
-git clone https://github.com/Prameet-26/springboot-cicd-pipeline.git
+./mvnw clean package
 ```
 
-## Build
+Compiles the application and generates the executable JAR.
+
+---
+
+## Stage 3 — Unit Testing
 
 ```bash
-mvn clean package
+./mvnw test
 ```
 
-## Build Docker Image
+Runs unit tests before creating the Docker image.
+
+---
+
+## Stage 4 — SonarQube Analysis
+
+The application source code is analyzed for:
+
+- Bugs
+- Vulnerabilities
+- Code Smells
+- Security Hotspots
+- Maintainability
+- Code Duplication
+
+---
+
+## Stage 5 — Docker Image Build
 
 ```bash
 docker build -t springboot-cicd .
 ```
 
-## Run Container
+Creates the Docker image.
+
+---
+
+## Stage 6 — Docker Login
+
+Jenkins authenticates securely using stored Docker Hub credentials.
+
+---
+
+## Stage 7 — Docker Push
+
+```bash
+docker push prameet26/springboot-cicd:latest
+```
+
+Publishes the image to Docker Hub.
+
+---
+
+# 🐳 Docker
+
+The application is packaged as a Docker container.
+
+Benefits include:
+
+- Consistent runtime
+- Easy deployment
+- Environment independence
+- Versioned images
+- Simplified scaling
+
+---
+
+# 🔍 SonarQube
+
+Integrated with Jenkins to ensure code quality before deployment.
+
+Checks include:
+
+- Bugs
+- Vulnerabilities
+- Security Hotspots
+- Maintainability Rating
+- Code Smells
+- Duplicated Code
+
+---
+
+# 📊 Monitoring Stack
+
+## Spring Boot Actuator
+
+Exposes application metrics.
+
+```
+/actuator/prometheus
+```
+
+---
+
+## Micrometer
+
+Collects JVM and application metrics.
+
+Examples:
+
+- CPU Usage
+- Heap Memory
+- Thread Count
+- HTTP Requests
+- Response Time
+
+---
+
+## Prometheus
+
+Prometheus scrapes metrics from the application every few seconds.
+
+---
+
+## Grafana
+
+Visualizes metrics using dashboards.
+
+Dashboard Panels include:
+
+- JVM Memory
+- CPU Usage
+- Request Count
+- Response Time
+- Application Health
+- Uptime
+
+---
+
+## Alertmanager
+
+Receives alerts from Prometheus.
+
+Configured Alerts
+
+- Spring Boot Application Down
+- Instance Down
+
+Notification Method
+
+- Gmail SMTP Email
+
+---
+
+# 📦 Docker Hub Repository
+
+```
+Repository:
+prameet26/springboot-cicd
+
+Image Tag:
+latest
+```
+
+Every successful Jenkins build pushes a fresh Docker image.
+
+---
+
+# 🚀 Running the Project
+
+Clone Repository
+
+```bash
+git clone https://github.com/Prameet-26/springboot-cicd-pipeline.git
+```
+
+Build
+
+```bash
+./mvnw clean package
+```
+
+Docker Build
+
+```bash
+docker build -t springboot-cicd .
+```
+
+Run
 
 ```bash
 docker run -d -p 8081:8080 springboot-cicd
 ```
 
----
+Application
 
-# 📈 Monitoring URLs
+```
+http://localhost:8081
+```
 
-| Service      | URL                |
-| ------------ | ------------------ |
-| Spring Boot  | http://EC2-IP:8081 |
-| Jenkins      | http://EC2-IP:8080 |
-| SonarQube    | http://EC2-IP:9000 |
-| Prometheus   | http://EC2-IP:9090 |
-| Grafana      | http://EC2-IP:3000 |
-| Alertmanager | http://EC2-IP:9093 |
+Metrics Endpoint
+
+```
+http://localhost:8081/actuator/prometheus
+```
 
 ---
 
 # 📸 Screenshots
 
-Add screenshots for:
+Create a `screenshots/` folder in your repository and add images such as:
 
-* Jenkins Successful Pipeline
-* SonarQube Dashboard
-* Prometheus Targets
-* Grafana Dashboard
-* Spring Boot Application
-* Email Alert Notification
+```
+screenshots/
+│
+├── github-repository.png
+├── jenkins-dashboard.png
+├── successful-pipeline.png
+├── sonarqube-dashboard.png
+├── docker-desktop.png
+├── dockerhub.png
+├── prometheus-targets.png
+├── grafana-dashboard.png
+└── alert-email.png
+```
+
+Then embed them in the README:
+
+```markdown
+## Jenkins Pipeline
+
+![Jenkins](screenshots/successful-pipeline.png)
+
+## SonarQube
+
+![SonarQube](screenshots/sonarqube-dashboard.png)
+
+## Docker Desktop
+
+![Docker](screenshots/docker-desktop.png)
+
+## Docker Hub
+
+![DockerHub](screenshots/dockerhub.png)
+
+## Grafana
+
+![Grafana](screenshots/grafana-dashboard.png)
+```
 
 ---
 
-# 🎯 Future Improvements
+# 🛠 Challenges Faced
 
-* Kubernetes deployment
-* Helm charts
-* Terraform infrastructure provisioning
-* GitHub Actions pipeline
-* Loki log aggregation
-* Promtail integration
-* Grafana Alerting
-* AWS CloudWatch integration
+During this project, I encountered and resolved several real-world issues:
+
+- Docker permission issues inside Jenkins
+- Jenkins container unable to access Docker daemon
+- Docker Hub authentication failures
+- SonarQube connectivity configuration
+- Prometheus scrape target configuration
+- Grafana dashboard setup
+- Alertmanager SMTP configuration
+- Docker image build troubleshooting
+- Jenkins pipeline debugging
+- Git branch management
+
+Resolving these issues improved my understanding of DevOps troubleshooting and CI/CD workflows.
+
+---
+
+# 🎯 Key Learning Outcomes
+
+- Built an end-to-end CI/CD pipeline
+- Integrated SonarQube for code quality analysis
+- Automated Docker image creation and publishing
+- Implemented monitoring using Prometheus and Grafana
+- Configured email alerts using Alertmanager
+- Learned Jenkins Declarative Pipelines
+- Improved troubleshooting skills across multiple DevOps tools
+
+---
+
+# 🔮 Future Enhancements
+
+- Kubernetes Deployment
+- Amazon ECS/Fargate Deployment
+- Terraform Infrastructure
+- Helm Charts
+- GitHub Actions
+- Argo CD
+- Blue-Green Deployment
+- Rolling Updates
+- Kubernetes Monitoring
 
 ---
 
@@ -254,6 +451,10 @@ Add screenshots for:
 
 **Prameet Kumar**
 
-B.Tech 
+**GitHub:** https://github.com/Prameet-26
 
-DevOps | AWS | Docker | Jenkins | Kubernetes | Terraform | Monitoring | CI/CD
+**Docker Hub:** https://hub.docker.com/u/prameet26
+
+---
+
+## ⭐ If you found this project helpful, consider giving it a star!
