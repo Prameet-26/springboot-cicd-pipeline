@@ -473,6 +473,7 @@ Alertmanager successfully sends email notifications when the Spring Boot applica
 ---
 
 🚧 Challenges Faced During Development
+
 1. Jenkins Could Not Execute Docker Commands
 ❌ Problem
 
