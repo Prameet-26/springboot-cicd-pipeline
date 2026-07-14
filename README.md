@@ -472,23 +472,126 @@ Alertmanager successfully sends email notifications when the Spring Boot applica
 ![Alert Email](screenshots/alert-email.png)
 ---
 
-# 🛠 Challenges Faced
+🚧 Challenges Faced During Development
+1. Jenkins Could Not Execute Docker Commands
+❌ Problem
 
-During this project, I encountered and resolved several real-world issues:
+The Jenkins pipeline failed during the Docker build stage with:
 
-- Docker permission issues inside Jenkins
-- Jenkins container unable to access Docker daemon
-- Docker Hub authentication failures
-- SonarQube connectivity configuration
-- Prometheus scrape target configuration
-- Grafana dashboard setup
-- Alertmanager SMTP configuration
-- Docker image build troubleshooting
-- Jenkins pipeline debugging
-- Git branch management
+docker: command not found
+🔍 Root Cause
 
-Resolving these issues improved my understanding of DevOps troubleshooting and CI/CD workflows.
+Although Docker was installed on the Ubuntu host, the Jenkins container had no access to the Docker CLI or Docker daemon.
 
+✅ Solution
+Mounted the Docker socket (/var/run/docker.sock)
+Mounted the Docker binary into the Jenkins container
+Recreated the Jenkins container with the required volume mappings
+Verified Docker access by running docker --version inside the Jenkins container
+🎯 Learning
+
+I learned how Jenkins communicates with Docker and why mounting the Docker socket is essential for containerized Jenkins deployments.
+
+2. Docker Image Push Failed
+❌ Problem
+
+The pipeline built the image successfully but failed while pushing it to Docker Hub.
+
+🔍 Root Cause
+
+Docker Hub credentials were not configured correctly in Jenkins.
+
+✅ Solution
+Created Docker Hub credentials in Jenkins.
+Updated the Jenkinsfile to authenticate using Jenkins credentials.
+Successfully pushed the image after authentication.
+🎯 Learning
+
+I learned how to securely manage credentials in Jenkins instead of hardcoding usernames and passwords.
+
+3. SonarQube Integration Failed
+❌ Problem
+
+Static code analysis did not execute successfully.
+
+🔍 Root Cause
+
+SonarQube server and authentication token were not configured correctly.
+
+✅ Solution
+Started the SonarQube container.
+Generated a project token.
+Configured the SonarQube server in Jenkins.
+Updated the pipeline to use the token.
+🎯 Learning
+
+I learned how Jenkins integrates with SonarQube for automated code quality analysis.
+
+4. Prometheus Was Not Collecting Metrics
+❌ Problem
+
+Prometheus displayed the application as DOWN.
+
+🔍 Root Cause
+
+The scrape configuration pointed to an incorrect endpoint.
+
+✅ Solution
+Updated the Prometheus configuration.
+Verified the /actuator/prometheus endpoint.
+Reloaded Prometheus.
+Confirmed the target status changed to UP.
+🎯 Learning
+
+I learned how Prometheus discovers services and scrapes application metrics.
+
+5. Grafana Dashboard Showed No Data
+❌ Problem
+
+Dashboards loaded but displayed empty graphs.
+
+🔍 Root Cause
+
+Grafana was not connected to the correct Prometheus data source.
+
+✅ Solution
+Configured Prometheus as the data source.
+Imported dashboards.
+Verified PromQL queries.
+🎯 Learning
+
+I learned how Grafana visualizes metrics collected by Prometheus.
+
+6. Email Alerts Were Not Received
+❌ Problem
+
+Alertmanager generated alerts but no emails arrived.
+
+🔍 Root Cause
+
+SMTP configuration and Gmail authentication were incomplete.
+
+✅ Solution
+Configured Gmail SMTP.
+Generated a Gmail App Password.
+Updated Alertmanager configuration.
+Triggered a test alert successfully.
+🎯 Learning
+
+I learned how production monitoring systems notify engineers during application failures.
+
+📚 Overall Lessons Learned
+
+Through this project, I gained hands-on experience in:
+
+Designing and implementing an end-to-end CI/CD pipeline.
+Troubleshooting Jenkins pipeline failures.
+Integrating Docker with Jenkins.
+Performing automated static code analysis with SonarQube.
+Deploying containerized Spring Boot applications.
+Monitoring applications using Prometheus and Grafana.
+Configuring Alertmanager for automated email notifications.
+Debugging real-world infrastructure, networking, and authentication issues.
 ---
 
 # 🎯 Key Learning Outcomes
