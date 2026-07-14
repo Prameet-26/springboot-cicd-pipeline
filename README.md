@@ -67,43 +67,11 @@ This project simulates a real DevOps workflow commonly used in enterprise enviro
 
 # 🏗 Architecture
 
-```text
-                     Developer
-                         │
-                         ▼
-                  GitHub Repository
-                         │
-                         ▼
-                  Jenkins Pipeline
-                         │
-      ┌──────────────────┼─────────────────┐
-      │                  │                 │
-      ▼                  ▼                 ▼
- Checkout           Build/Test      SonarQube Scan
-      │                  │                 │
-      └──────────────────┼─────────────────┘
-                         ▼
-                Docker Image Build
-                         │
-                         ▼
-                 Docker Hub Registry
-                         │
-                         ▼
-              Spring Boot Container
-                         │
-               /actuator/prometheus
-                         │
-                         ▼
-                  Prometheus Server
-                         │
-                         ▼
-                  Grafana Dashboard
-                         │
-                         ▼
-                   Alertmanager
-                         │
-                         ▼
-                Email Notifications
+## 🏗️ Architecture Diagram
+
+<p align="center">
+  <img src="screenshots/architecture-diagram.png" alt="Architecture Diagram" width="1000">
+</p>
 ```
 
 ---
