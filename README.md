@@ -378,28 +378,101 @@ screenshots/
 
 Then embed them in the README:
 
-```markdown
-## Jenkins Pipeline
+# 📸 Project Execution Screenshots
 
-![Jenkins](screenshots/successful-pipeline.png)
+## 1. GitHub Repository
 
-## SonarQube
+### Main Branch
 
-![SonarQube](screenshots/sonarqube-dashboard.png)
+![GitHub Main Repository](screenshots/github-main.png)
 
-## Docker Desktop
+### Development Branch
 
-![Docker](screenshots/docker-desktop.png)
+![GitHub Dev Branch](screenshots/github-dev.png)
 
-## Docker Hub
+---
 
-![DockerHub](screenshots/dockerhub.png)
+## 2. AWS EC2 Instance
 
-## Grafana
+The CI/CD pipeline and monitoring stack are deployed on an AWS EC2 instance.
 
-![Grafana](screenshots/grafana-dashboard.png)
-```
+![EC2 Instance](screenshots/ec2-instance.png)
 
+---
+
+## 3. Docker
+
+### Docker Images
+
+![Docker Images](screenshots/docker-images.png)
+
+### Running Containers
+
+![Docker Containers](screenshots/docker-containers.png)
+
+---
+
+## 4. Jenkins Pipeline
+
+### Pipeline Execution
+
+![Jenkins Pipeline](screenshots/jenkins-pipeline.png)
+
+### Successful Build
+
+![Jenkins Success](screenshots/jenkins-success.png)
+
+---
+
+## 5. SonarQube Code Quality
+
+Static code analysis performed successfully.
+
+![SonarQube Dashboard](screenshots/sonarqube-dashboard.png)
+
+---
+
+## 6. Spring Boot Application
+
+Application deployed successfully through the Jenkins pipeline.
+
+![Spring Boot Running](screenshots/application-running.png)
+
+---
+
+## 7. Docker Hub Image
+
+Docker image pushed automatically by Jenkins.
+
+![DockerHub Image](screenshots/dockerhub-image.png)
+
+---
+
+## 8. Prometheus Monitoring
+
+Prometheus successfully scraping Spring Boot application metrics.
+
+![Prometheus Targets](screenshots/prometheus-targets.png)
+
+---
+
+## 9. Grafana Dashboards
+
+### Dashboard 1
+
+![Grafana Dashboard 1](screenshots/grafana-dashboard-1.png)
+
+### Dashboard 2
+
+![Grafana Dashboard 2](screenshots/grafana-dashboard-2.png)
+
+---
+
+## 10. Email Alerting
+
+Alertmanager successfully sends email notifications when the Spring Boot application becomes unavailable.
+
+![Alert Email](screenshots/alert-email.png)
 ---
 
 # 🛠 Challenges Faced
