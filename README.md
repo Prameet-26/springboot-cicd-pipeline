@@ -396,19 +396,16 @@ Then embed them in the README:
 
 The CI/CD pipeline and monitoring stack are deployed on an AWS EC2 instance.
 
-![EC2 Instance](screenshots/ec2-instance.png)
+![EC2 Instance](screenshots/EC2-instance.png)
 
 ---
 
 ## 3. Docker
 
-### Docker Images
-
-![Docker Images](screenshots/docker-images.png)
 
 ### Running Containers
 
-![Docker Containers](screenshots/docker-containers.png)
+![Docker Containers](screenshots/Docker-containers.png)
 
 ---
 
@@ -444,7 +441,7 @@ Application deployed successfully through the Jenkins pipeline.
 
 Docker image pushed automatically by Jenkins.
 
-![DockerHub Image](screenshots/dockerhub-image.png)
+![DockerHub Image](screenshots/Dockerhub-images.png)
 
 ---
 
@@ -460,11 +457,11 @@ Prometheus successfully scraping Spring Boot application metrics.
 
 ### Dashboard 1
 
-![Grafana Dashboard 1](screenshots/grafana-dashboard-1.png)
+![Grafana Dashboard 1](screenshots/grafana-dashboard1.png)
 
 ### Dashboard 2
 
-![Grafana Dashboard 2](screenshots/grafana-dashboard-2.png)
+![Grafana Dashboard 2](screenshots/grafana-dashboard2.png)
 
 ---
 
