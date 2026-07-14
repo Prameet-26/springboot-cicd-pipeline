@@ -384,7 +384,7 @@ Then embed them in the README:
 
 ### Main Branch
 
-![GitHub Main Repository](screenshots/github-main.png)
+![GitHub Main Repository](screenshots/GitHub Repository.png)
 
 ### Development Branch
 
