@@ -388,7 +388,7 @@ Then embed them in the README:
 
 ### Development Branch
 
-![GitHub Dev Branch](screenshots/github-dev.png)
+![GitHub Dev Branch](screenshots/Github-dev.png)
 
 ---
 
