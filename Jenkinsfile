@@ -32,14 +32,32 @@ pipeline {
             }
         }
 
+        stage('OWASP Dependency-Check') {
+            steps {
+                sh '''
+                    ~/dependency-check/bin/dependency-check.sh \
+                        --project "SpringBoot-CICD" \
+                        --scan . \
+                        --format HTML \
+                        --out dependency-check-report
+                '''
+            }
+        }
+
+        stage('Publish OWASP Report') {
+            steps {
+                archiveArtifacts artifacts: 'dependency-check-report/**/*', fingerprint: true
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                         chmod +x mvnw
                         ./mvnw sonar:sonar \
-                          -Dsonar.projectKey=springboot-cicd \
-                          -Dsonar.projectName=springboot-cicd
+                            -Dsonar.projectKey=springboot-cicd \
+                            -Dsonar.projectName=springboot-cicd
                     '''
                 }
             }
@@ -55,41 +73,27 @@ pipeline {
 
         stage('Docker Info') {
             steps {
-                sh '''
-                    echo "Current User:"
-                    whoami
-
-                    echo "Current Directory:"
-                    pwd
-
-                    echo "PATH:"
-                    echo $PATH
-
-                    echo "Docker Version:"
-                    /usr/bin/docker --version
-                '''
+                sh 'docker version'
             }
         }
 
         stage('Docker Build') {
             steps {
                 sh '''
-                    /usr/bin/docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
+                    docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
                 '''
             }
         }
 
         stage('Docker Login') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-cred',
-                        usernameVariable: 'DOCKER_USER',
-                        passwordVariable: 'DOCKER_PASS'
-                    )
-                ]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-cred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
                     sh '''
-                        echo "$DOCKER_PASS" | /usr/bin/docker login -u "$DOCKER_USER" --password-stdin
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     '''
                 }
             }
@@ -98,36 +102,26 @@ pipeline {
         stage('Docker Push') {
             steps {
                 sh '''
-                    /usr/bin/docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+                    docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
                 '''
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                    /usr/bin/docker stop springboot-cicd || true
-                    /usr/bin/docker rm springboot-cicd || true
-
-                    /usr/bin/docker pull ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
-
-                    /usr/bin/docker run -d \
-                        --name springboot-cicd \
-                        -p 8081:8080 \
-                        ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
-                '''
+                echo "Deployment stage placeholder."
+                // Add Kubernetes deployment commands here later.
             }
         }
     }
 
     post {
-
         success {
-            echo '🎉 CI/CD Pipeline SUCCESS'
+            echo "🎉 CI/CD Pipeline SUCCESS"
         }
 
         failure {
-            echo '❌ CI/CD Pipeline FAILED'
+            echo "❌ CI/CD Pipeline FAILED"
         }
 
         always {
