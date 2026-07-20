@@ -35,9 +35,9 @@ pipeline {
         stage('OWASP Dependency-Check') {
             steps {
                 sh '''
-                    ~/dependency-check/bin/dependency-check.sh \
+                    /var/jenkins_home/dependency-check/bin/dependency-check.sh \
                         --project "SpringBoot-CICD" \
-                        --scan . \
+                        --scan pom.xml \
                         --format HTML \
                         --out dependency-check-report
                 '''
@@ -110,12 +110,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deployment stage placeholder."
-                // Add Kubernetes deployment commands here later.
+                echo "Kubernetes deployment will be added later."
             }
         }
     }
 
     post {
+
         success {
             echo "🎉 CI/CD Pipeline SUCCESS"
         }
