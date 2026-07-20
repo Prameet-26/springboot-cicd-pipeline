@@ -37,9 +37,10 @@ pipeline {
                 sh '''
                     /var/jenkins_home/dependency-check/bin/dependency-check.sh \
                         --project "SpringBoot-CICD" \
-                        --scan pom.xml \
+                        --scan . \
                         --format HTML \
-                        --out dependency-check-report
+                        --out dependency-check-report \
+			--noupdate
                 '''
             }
         }
