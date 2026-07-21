@@ -39,8 +39,7 @@ pipeline {
                         --project "SpringBoot-CICD" \
                         --scan . \
                         --format HTML \
-                        --out dependency-check-report \
-			--noupdate
+                        --out dependency-check-report 
                 '''
             }
         }
