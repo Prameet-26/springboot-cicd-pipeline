@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_USER = "prameet26"
         IMAGE_NAME = "springboot-cicd"
+	AWS_PAGER = ""
     }
 
     stages {
@@ -107,15 +108,23 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo "Deployment stage placeholder."
-                echo "Kubernetes deployment will be added later."
-            }
-        }
-    }
+	stage('Deploy to Amazon EKS') {
+             steps {
+                 sh '''
 
-    post {
+           	     kubectl set image deployment/springboot-app \
+                     springboot-container=${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+
+                     kubectl rollout status deployment/springboot-app
+  
+                     kubectl get deployment
+                     kubectl get pods
+                     kubectl get svc
+                  '''
+             }
+         }
+
+    post  {
 
         success {
             echo "🎉 CI/CD Pipeline SUCCESS"
