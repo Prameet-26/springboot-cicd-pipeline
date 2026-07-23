@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_USER = "prameet26"
         IMAGE_NAME = "springboot-cicd"
-	AWS_PAGER = ""
+        AWS_PAGER = ""
     }
 
     stages {
@@ -40,7 +40,7 @@ pipeline {
                         --project "SpringBoot-CICD" \
                         --scan . \
                         --format HTML \
-                        --out dependency-check-report 
+                        --out dependency-check-report
                 '''
             }
         }
@@ -108,30 +108,30 @@ pipeline {
             }
         }
 
-	stage('Deploy to Amazon EKS') {
-             steps {
-                 sh '''
+        stage('Deploy to Amazon EKS') {
+            steps {
+                sh '''
+                    kubectl set image deployment/springboot-app \
+                    springboot-container=${DOCKERHUB_USER}/${IMAGE_NAME}:latest
 
-           	     kubectl set image deployment/springboot-app \
-                     springboot-container=${DOCKERHUB_USER}/${IMAGE_NAME}:latest
+                    kubectl rollout status deployment/springboot-app
 
-                     kubectl rollout status deployment/springboot-app
-  
-                     kubectl get deployment
-                     kubectl get pods
-                     kubectl get svc
-                  '''
-             }
-         }
+                    kubectl get deployment -o wide
+                    kubectl get pods -o wide
+                    kubectl get svc
+                '''
+            }
+        }
+    }
 
-    post  {
+    post {
 
         success {
-            echo "🎉 CI/CD Pipeline SUCCESS"
+            echo "🎉 Spring Boot DevSecOps CI/CD Pipeline SUCCESS"
         }
 
         failure {
-            echo "❌ CI/CD Pipeline FAILED"
+            echo "❌ Spring Boot DevSecOps CI/CD Pipeline FAILED"
         }
 
         always {
