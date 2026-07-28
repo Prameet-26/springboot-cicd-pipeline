@@ -663,7 +663,7 @@ The Docker image creation stage performs the following tasks:
 
 # 📷 Docker Image Build
 
-![Docker Build](screenshots/docker-build.png)
+![Docker Build](screenshots/Docker-containers.png)
 
 The Docker build stage packages the application into a production-ready container image that can be deployed consistently across environments.
 
@@ -915,7 +915,7 @@ This centralized metric collection provides complete visibility into system heal
 
 # 📷 Prometheus Dashboard
 
-![Prometheus](screenshots/prometheus-dashboard.png)
+![Prometheus](screenshots/prometheus-targets.png)
 
 The Prometheus dashboard displays configured scrape targets, metric collection status, and query results, confirming successful monitoring of the application and infrastructure.
 
