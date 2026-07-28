@@ -419,7 +419,7 @@ The Pipeline View illustrates every stage of the DevSecOps workflow. Each stage 
 
 # 📷 Jenkins Console Output
 
-![Jenkins Console](screenshots/jenkins-console.png)
+![Jenkins Console](screenshots/jenkins-console-success.png)
 
 The Jenkins Console Output records detailed logs for each stage, including build progress, security scans, Docker operations, Kubernetes deployment, and rollout verification. These logs are essential for troubleshooting and auditing pipeline executions.
 
@@ -671,7 +671,7 @@ The Docker build stage packages the application into a production-ready containe
 
 # 📷 Docker Hub Repository
 
-![Docker Hub](screenshots/dockerhub.png)
+![Docker Hub](screenshots/Dockerhub.png)
 
 After a successful build, Jenkins pushes the Docker image to Docker Hub, making it available for automated deployment to Amazon EKS.
 
